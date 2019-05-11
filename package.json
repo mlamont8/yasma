@@ -1,0 +1,21 @@
+{
+  "name": "yasma",
+  "version": "1.0.0",
+  "description": "Yet Another Social Media App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"cd server && nodemon server.js\" \"cd client && npm start\""
+  },
+  "keywords": [
+    "node",
+    "react",
+    "hapi",
+    "postgresql"
+  ],
+  "author": "M Lamont Taylor",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^4.1.0"
+  }
+}
