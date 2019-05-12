@@ -58,36 +58,55 @@ exports.configureRoutes = server => {
     {
       method: "POST",
       path: "/users",
-      handler: request => {
-        const user = User.create(request.payload.user);
-        return user;
+      handler: async (request, h) => {
+        try {
+          const user = await User.create(request.payload);
+          return user;
+        } catch {
+          return h.response(error).code(500);
+        }
+      },
+      options: {
+        validate: {
+          payload: {
+            username: Joi.string()
+              .min(3)
+              .required(),
+
+            password: Joi.string()
+              .min(3)
+              .required(),
+
+            email: Joi.string()
+              .email({ minDomainSegments: 2 })
+              .required(),
+            rating: Joi.number()
+          },
+          failAction: (request, h, error) => {
+            return error.isJoi
+              ? h.response(error.details[0]).takeover()
+              : h.response(error).takeover();
+          }
+        }
       }
-      //   config: {
-      //     validate: {
-      //       payload: {
-      //         user: {
-      //           username: Joi.string()
-      //             .min(3)
-      //             .max(10)
-      //             .required(),
-      //           password: Joi.string()
-      //             .min(7)
-      //             .required(),
-      //           email: Joi.string().required()
-      //         }
-      //       }
-      //     }
-      //   }
     },
     {
-      method: "PUT",
-      path: "/users",
-      handler: () => {}
+      method: ["PUT", "PATCH"],
+      path: "/users/{id}",
+      handler: async request => {
+        const user = await User.findByPk(request.params.id);
+        user.update(request.payload);
+
+        return user.save();
+      }
     },
     {
       method: "DELETE",
-      path: "/users",
-      handler: () => {}
+      path: "/users/{id}",
+      handler: async request => {
+        const user = await User.findByPk(request.params.id);
+        return user.destroy();
+      }
     }
   ]);
 };
