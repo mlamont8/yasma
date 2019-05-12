@@ -1,3 +1,6 @@
+const { Post, Comment, User } = require("./models");
+const Joi = require("@hapi/joi");
+
 exports.configureRoutes = server => {
   return server.route([
     //   Posts
@@ -48,12 +51,33 @@ exports.configureRoutes = server => {
     {
       method: "GET",
       path: "/users",
-      handler: () => {}
+      handler: () => {
+        return User.findAll();
+      }
     },
     {
       method: "POST",
       path: "/users",
-      handler: () => {}
+      handler: request => {
+        const user = User.create(request.payload.user);
+        return user;
+      }
+      //   config: {
+      //     validate: {
+      //       payload: {
+      //         user: {
+      //           username: Joi.string()
+      //             .min(3)
+      //             .max(10)
+      //             .required(),
+      //           password: Joi.string()
+      //             .min(7)
+      //             .required(),
+      //           email: Joi.string().required()
+      //         }
+      //       }
+      //     }
+      //   }
     },
     {
       method: "PUT",
